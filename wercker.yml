@@ -12,8 +12,8 @@ build:
             repository: $DOCKER_REPO
             registry: https://iad.ocir.io/v2
 
-deploy-to-kubernetes:
-    box: python:2.7
+deploy:
+    box: node:12.18.1
     steps:
 
     # https://github.com/wercker/step-bash-template
@@ -43,7 +43,7 @@ deploy-to-kubernetes:
         server: $OKE_MASTER
         token: $OKE_TOKEN
         insecure-skip-tls-verify: true
-        command: patch deployment/get-ip -p '{"spec":{"progressDeadlineSeconds":500}}'
+        command: patch deployment/node-hello-app -p '{"spec":{"progressDeadlineSeconds":500}}'
 
     # Watch the Kubernetes deployment. Once the pods are considered healthy the step will exit 0
     # If they aren't healthy within 60 seconds, it will exit with a non 0 exit code, and cause the run to fail.
@@ -52,4 +52,4 @@ deploy-to-kubernetes:
         server: $OKE_MASTER
         token: $OKE_TOKEN
         insecure-skip-tls-verify: true
-        command: rollout status deployment/get-ip
+        command: rollout status deployment/node-hello-app
