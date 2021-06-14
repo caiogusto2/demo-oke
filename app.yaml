@@ -1,0 +1,37 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: node-hello-app
+spec:
+  selector:
+    matchLabels:
+      app: node-hello-app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: node-hello-app
+        version: v1
+    spec:
+      containers:
+      - name: node-hello-app
+        image: ${DOCKER_REPO}:${WERCKER_GIT_COMMIT}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          protocol: TCP
+      imagePullSecrets:
+        - name: ocirsecret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-hello-app-lb
+  labels:
+    app: node-hello-app
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 3000
+  selector:
+    app: node-hello-app
